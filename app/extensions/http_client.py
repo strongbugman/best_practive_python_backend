@@ -29,7 +29,6 @@ class Api(ExtensionMixin):
         return await self.session.close()
 
     async def request(self, method: str, url: StrOrURL, **kwargs) -> Response:
-        name = url
         res = await self.session.request(method, url, **kwargs)
         await res.read()
         return res

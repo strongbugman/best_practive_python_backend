@@ -1,6 +1,5 @@
-from elasticapm.base import Client as APMClient
-
 import settings
+
 from .apiman import Apiman
 from .cache import RedisCache, SizeLimitedMemoryCache
 from .coroutine_pool import Pool
@@ -8,7 +7,6 @@ from .database import Database
 from .jwt import Jwt
 from .redis import Redis
 
-apm = APMClient(settings.APM)
 read_database = Database(**settings.READ_DATABASE)
 database = Database(**settings.DATABASE)
 redis = Redis(**settings.REDIS)  # type: ignore
@@ -27,11 +25,18 @@ EXTENSIONS = [
     redis_cache,
     memory_cache,
 ]
+_started = False
+
 
 async def start_extensions():
+    if _started:
+        return
     for ext in EXTENSIONS:
         await ext._on_startup()
 
+
 async def stop_extensions():
+    if not _started:
+        return
     for ext in EXTENSIONS:
         await ext._on_shutdown()

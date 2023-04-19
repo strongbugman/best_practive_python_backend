@@ -10,6 +10,7 @@ from contextlib import suppress
 
 from app.base import ExtensionMixin
 from app.log import logger
+
 from .redis import Redis
 
 

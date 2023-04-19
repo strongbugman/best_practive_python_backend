@@ -1,14 +1,16 @@
-import asyncio
-
 from async_asgi_testclient import TestClient
 
+from app import applications
 from app import extensions as exts
-from app import models as m
 
 from .base import BaseTestCase
 
 
 class TestCase(BaseTestCase):
+    async def asyncSetUp(self) -> None:
+        await super().asyncSetUp()
+        self.api_client = TestClient(applications.starlette)
+
     async def test_openapi(self):
         exts.apiman.validate_specification()
 

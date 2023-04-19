@@ -1,41 +1,24 @@
 import asyncio
+import functools
 import time
 import typing
 
 import arrow
 import orjson
 import sentry_sdk
-from elasticapm.traces import capture_span
+from starlette.applications import Starlette
 from starlette.endpoints import HTTPEndpoint
 from starlette.exceptions import HTTPException
+from starlette.requests import Request
 from starlette.requests import Request as _Request
 from starlette.responses import Response
-
-from app import exceptions
-from app.extensions.apiman import Apiman
-from app.extensions.jwt import Jwt
-from app import extensions
-from starlette.exceptions import HTTPException
 from starlette.responses import Response as _Response
-
-import asyncio
-import functools
-
-import elasticapm
-import elasticapm.instrumentation.control
-from elasticapm.conf import constants
-from elasticapm.contrib.asyncio.traces import set_context
-from elasticapm.contrib.starlette import ElasticAPM, make_apm_client
-from elasticapm.utils.encoding import long_field
-from elasticapm.contrib.starlette.utils import (
-    get_data_from_request,
-    get_data_from_response,
-)
-from starlette.applications import Starlette
-from starlette.requests import Request
 from starlette.types import Message
 
 import settings
+from app import exceptions, extensions
+from app.extensions.apiman import Apiman
+from app.extensions.jwt import Jwt
 
 
 class Request(_Request):
@@ -72,14 +55,7 @@ class JSONResponse(Response):
             return value
 
     def render(self, content: typing.Any) -> bytes:
-        with capture_span(
-            "RENDER json response",
-            span_type="serialization",
-            span_subtype="response",
-            span_action="render json",
-            leaf=True,
-        ):
-            return orjson.dumps(content, default=self._json_dump_default)
+        return orjson.dumps(content, default=self._json_dump_default)
 
 
 class Endpoint(HTTPEndpoint):

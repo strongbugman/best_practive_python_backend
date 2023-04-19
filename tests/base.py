@@ -1,12 +1,12 @@
-import unittest
-import inspect
 import asyncio
+import inspect
+import unittest
 
 import danio
-from async_asgi_testclient import TestClient
 
+import manage
 import settings
-from app import extensions, applications
+from app import extensions
 
 
 class BaseTestCase(unittest.TestCase):
@@ -34,13 +34,12 @@ class BaseTestCase(unittest.TestCase):
     async def asyncSetUp(self) -> None:
         await extensions.start_extensions()
 
-        self.api_client = TestClient(applications.starlette)
-
-
         for c in (extensions.memory_cache, extensions.redis_cache):
             await c.clear()
         await extensions.redis.flushdb()
-        await extensions.database.execute(f"DROP DATABASE IF EXISTS {settings.PROJECT_NAME}")
+        await extensions.database.execute(
+            f"DROP DATABASE IF EXISTS {settings.PROJECT_NAME}"
+        )
         await extensions.database.execute(
             f"CREATE DATABASE IF NOT EXISTS `{settings.PROJECT_NAME}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
         )

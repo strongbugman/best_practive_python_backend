@@ -1,5 +1,5 @@
-import os
 import logging
+import os
 
 from oxalis.amqp import Exchange, Queue
 
@@ -39,8 +39,8 @@ OXALIS = {
     "default_queue": Queue(f"{PROJECT_NAME}.default"),
     "default_exchange": Exchange(f"{PROJECT_NAME}.default"),
     "default_routing_key": "default",
-    "timeout": 5,
-    "worker_num": 8,
+    "timeout": 30,
+    "worker_num": 2,
 }
 OXALIS_CONNECTION_URL = os.environ.get(
     "CELERY_BROKER_URL", "amqp://root:letmein@rabbitmq:5672/"
@@ -51,14 +51,6 @@ SENTRY = {
     "max_breadcrumbs": 20,
     "sample_rate": 1,
     "environment": ENVIRONMENT,
-}
-APM = {
-    "SERVICE_NAME": PROJECT_NAME,
-    "ENVIRONMENT": ENVIRONMENT,
-    "SERVER_URL": "",
-    "SECRET_TOKEN": "",
-    "TRANSACTION_SAMPLE_RATE": 1.0,
-    "SANITIZE_FIELD_NAMES": ("*jwttoken*",),
 }
 
 logging.basicConfig(level=logging.INFO)

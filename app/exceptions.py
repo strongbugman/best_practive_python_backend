@@ -22,7 +22,6 @@ class RequestWrongException(ClientException):
 
 class ForbiddenException(ClientException):
     http_status_code = 403
-    pass
 
 
 class SessionExpireException(ClientException):

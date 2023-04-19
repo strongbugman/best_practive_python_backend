@@ -21,7 +21,7 @@ def suppress(capture: bool = True, exception: typing.Type[Exception] = Exception
     try:
         yield
     except Exception as e:
-        if os.environ.get("DEPLOY_ENV") == "test":
+        if os.environ.get("ENVIRONMENT") == "test":
             raise
         if not isinstance(e, exception):
             raise
